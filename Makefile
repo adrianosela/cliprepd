@@ -8,4 +8,4 @@ setbin: build
 	cp repd /usr/local/bin
 
 build:
-	go build -ldflags "-X main.buildVersion=$(VERSION)-$(RELEASE)" -o repd
+	go build -ldflags "-X main.version=$(VERSION)-$(RELEASE)" -o repd

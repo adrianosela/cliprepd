@@ -4,27 +4,14 @@ import (
 	"log"
 	"os"
 
-	cli "gopkg.in/urfave/cli.v1"
+	"github.com/adrianosela/cliprepd/tool"
 )
 
 // injected at build time
-var buildVersion string
+var version string
 
 func main() {
-
-	app := cli.NewApp()
-	app.Version = buildVersion
-	app.EnableBashCompletion = true
-	app.Usage = "cli to manage iprepd server"
-	app.CommandNotFound = func(c *cli.Context, command string) {
-		log.Printf("error: the command provided is not supported: %s", command)
-		c.App.Run([]string{"help"})
-	}
-
-	app.Commands = []cli.Command{}
-
-	if err := app.Run(os.Args); err != nil {
-		log.Printf("error: %s", err)
-		os.Exit(1)
+	if err := tool.GetApp(version).Run(os.Args); err != nil {
+		log.Fatalf("error: %s", err)
 	}
 }
