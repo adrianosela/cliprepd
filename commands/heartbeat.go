@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/adrianosela/cliprepd/tool/config"
+	"github.com/adrianosela/cliprepd/config"
 	cli "gopkg.in/urfave/cli.v1"
 )
 

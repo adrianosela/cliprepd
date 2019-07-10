@@ -18,6 +18,5 @@ func (c *IPrepd) LBHeartbeat() error {
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("unexpected status code: expected 200, got %d", resp.StatusCode)
 	}
-	fmt.Println("iprepd deployment is healthy!")
 	return nil
 }

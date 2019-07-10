@@ -4,14 +4,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/adrianosela/cliprepd/tool"
+	"github.com/adrianosela/cliprepd/app"
 )
 
 // injected at build time
 var version string
 
 func main() {
-	if err := tool.GetApp(version).Run(os.Args); err != nil {
+	if err := app.New(version).Run(os.Args); err != nil {
 		log.Fatalf("error: %s", err)
 	}
 }
