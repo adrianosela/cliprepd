@@ -2,6 +2,54 @@
 
 
 [[projects]]
+  digest = "1:ebaeb414df9abd72ff910cbd5ea19a4c6c98febbbef756eb07fb6e66b8148ba2"
+  name = "github.com/DataDog/datadog-go"
+  packages = ["statsd"]
+  pruneopts = "UT"
+  revision = "8a13fa761f51039f900738876f2837198fba804f"
+  version = "v2.2.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:cdf8d6dd78c3887782da29aedb7242a219e165d8d020be6e50738f56dea3d181"
+  name = "github.com/asergeyev/nradix"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "3872ab85bb568d5400c3f53ac4d903744b2c8ea9"
+
+[[projects]]
+  digest = "1:c950e574951c7199fb3d990d0e7a61996f40f8e646ba7cf8a557878d4c737f53"
+  name = "github.com/go-redis/redis"
+  packages = [
+    ".",
+    "internal",
+    "internal/consistenthash",
+    "internal/hashtag",
+    "internal/pool",
+    "internal/proto",
+    "internal/util",
+  ]
+  pruneopts = "UT"
+  revision = "75795aa4236dc7341eefac3bbe945e68c99ef9df"
+  version = "v6.15.3"
+
+[[projects]]
+  digest = "1:cbec35fe4d5a4fba369a656a8cd65e244ea2c743007d8f6c1ccb132acf9d1296"
+  name = "github.com/gorilla/mux"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "00bdffe0f3c77e27d2cf6f5c70232a2d3e4d9c15"
+  version = "v1.7.3"
+
+[[projects]]
+  digest = "1:31e761d97c76151dde79e9d28964a812c46efc5baee4085b86f68f0c654450de"
+  name = "github.com/konsorten/go-windows-terminal-sequences"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e"
+  version = "v1.0.2"
+
+[[projects]]
   digest = "1:0356f3312c9bd1cbeda81505b7fd437501d8e778ab66998ef69f00d7f9b3a0d7"
   name = "github.com/mattn/go-runewidth"
   packages = ["."]
@@ -18,6 +66,54 @@
   version = "v0.0.1"
 
 [[projects]]
+  digest = "1:04457f9f6f3ffc5fea48e71d62f2ca256637dee0a04d710288e27e05c8b41976"
+  name = "github.com/sirupsen/logrus"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "839c75faf7f98a33d445d181f3018b5c3409a45e"
+  version = "v1.4.2"
+
+[[projects]]
+  branch = "master"
+  digest = "1:e53472328ee66421f1640045de8a46d50fc769fd8888520f4a3e45ad5766fdf0"
+  name = "github.com/zmap/go-iptree"
+  packages = ["iptree"]
+  pruneopts = "UT"
+  revision = "1948b1097e2553065acd9e90ff9aa768d47b753b"
+
+[[projects]]
+  branch = "master"
+  digest = "1:3eb7851d674a0a49eadb63c3727290444e92f686f983bbcced9ed4341dcd8647"
+  name = "go.mozilla.org/hawk"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "a483e4a7047eb37b6cda2b04fb93a10fab60e6cc"
+
+[[projects]]
+  digest = "1:6e63560e7c4628a26b3d99e180fc3c18e77e454af4ec533710f18fd043aad4df"
+  name = "go.mozilla.org/iprepd"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "cf2290d3776bc0da4bb419133484288ed182859d"
+  version = "0.8"
+
+[[projects]]
+  digest = "1:ff7d09b74ef5678894846ffe2dd13103680b2829362f62db52af810f10bf77de"
+  name = "go.mozilla.org/mozlogrus"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "a4ca0c1ee1cb5e580348b1e1aac9bd3e5f07f26d"
+  version = "v2.0.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:5b3f90037a9027c43bdcae488c39d41aadecb9d85e645bb62b773a0a6f6e86b8"
+  name = "golang.org/x/sys"
+  packages = ["unix"]
+  pruneopts = "UT"
+  revision = "6ec70d6a5542cba804c6d16ebe8392601a0b7b60"
+
+[[projects]]
   digest = "1:b24d38b282bacf9791408a080f606370efa3d364e4b5fd9ba0f7b87786d3b679"
   name = "gopkg.in/urfave/cli.v1"
   packages = ["."]
@@ -25,11 +121,20 @@
   revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
   version = "v1.20.0"
 
+[[projects]]
+  digest = "1:4d2e5a73dc1500038e504a8d78b986630e3626dc027bc030ba5c75da257cdb96"
+  name = "gopkg.in/yaml.v2"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "51d6538a90f86fe93ac480b35f37b2be17fef232"
+  version = "v2.2.2"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
     "github.com/olekukonko/tablewriter",
+    "go.mozilla.org/iprepd",
     "gopkg.in/urfave/cli.v1",
   ]
   solver-name = "gps-cdcl"
