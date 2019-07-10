@@ -11,6 +11,7 @@ import (
 var LBHeartbeatCmd = cli.Command{
 	Name:   "lbheartbeat",
 	Action: lbheartbeatHandler,
+	Hidden: true,
 }
 
 func lbheartbeatHandler(ctx *cli.Context) error {
