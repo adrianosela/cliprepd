@@ -42,10 +42,10 @@ func versionHandler(ctx *cli.Context) error {
 	}
 
 	data := [][]string{
-		[]string{"COMMIT", resp.Commit},
-		[]string{"VERSION", resp.Version},
-		[]string{"SOURCE", resp.Source},
-		[]string{"BUILD", resp.Build},
+		{"COMMIT", resp.Commit},
+		{"VERSION", resp.Version},
+		{"SOURCE", resp.Source},
+		{"BUILD", resp.Build},
 	}
 	table := tablewriter.NewWriter(os.Stdout)
 	for _, v := range data {
