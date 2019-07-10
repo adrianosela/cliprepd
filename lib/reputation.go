@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -33,6 +34,28 @@ func (c *IPrepd) GetReputation(objectType, object string) (*iprepd.Reputation, e
 		return nil, fmt.Errorf("could not unmarshal response body: %s", err)
 	}
 	return r, nil
+}
+
+// SetReputation updates the reputation of a given object and type to a given score
+func (c *IPrepd) SetReputation(r *iprepd.Reputation) error {
+	byt, err := json.Marshal(&r)
+	if err != nil {
+		return fmt.Errorf("could not marshal payload: %s", err)
+	}
+	req, err := http.NewRequest(http.MethodPut,
+		fmt.Sprintf("%s/type/%s/%s", c.hostURL, r.Type, r.Object), bytes.NewBuffer(byt))
+	if err != nil {
+		return fmt.Errorf("could not build http request: %s", err)
+	}
+	c.addAuth(req)
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("could not send http request: %s", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("non 200 status code received: %d", resp.StatusCode)
+	}
+	return nil
 }
 
 // DeleteReputation deletes the reputation of a given object and type

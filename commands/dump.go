@@ -15,10 +15,7 @@ import (
 var DumpCmd = cli.Command{
 	Name: "dump",
 	Flags: []cli.Flag{
-		cli.BoolFlag{
-			Name:  "json, j",
-			Usage: "print raw json -- don't pretty print",
-		},
+		jsonFlag,
 	},
 	Action: dumpCmdHandler,
 }
