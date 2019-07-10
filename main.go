@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/adrianosela/cliprepd/commands"
@@ -37,8 +36,8 @@ func main() {
 	app.Flags = appflags
 	app.Commands = appcmds
 	app.CommandNotFound = func(c *cli.Context, command string) {
-		log.Printf("error: the command provided is not supported: %s", command)
 		c.App.Run([]string{"help"})
+		fmt.Printf("\ncommand \"%s\" does not exist\n", command)
 	}
 	if err := app.Run(os.Args); err != nil {
 		fmt.Println(err)
