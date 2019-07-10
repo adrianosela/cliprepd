@@ -1,9 +1,10 @@
 package commands
 
 import (
-	"errors"
+	"encoding/json"
 	"fmt"
 
+	"github.com/adrianosela/cliprepd/clierr"
 	"github.com/adrianosela/cliprepd/config"
 	cli "gopkg.in/urfave/cli.v1"
 )
@@ -15,21 +16,24 @@ var VersionCmd = cli.Command{
 }
 
 func versionHandler(ctx *cli.Context) error {
-	vv := ctx.GlobalBool("verbose")
-
 	client, err := config.GetClient(ctx)
 	if err != nil {
-		msg := "error initializing IPrepd client"
-		if vv {
-			return fmt.Errorf("%s: %s", msg, err)
-		}
-		return errors.New(msg)
+		return clierr.Handle(ctx, clierr.ErrCouldNotInit, err)
 	}
 	resp, err := client.Version()
 	if err != nil {
 		return fmt.Errorf("could not retrieve version")
 	}
 
-	fmt.Println(*resp)
+	if ctx.GlobalBool("json") {
+		raw, err := json.Marshal(resp)
+		if err != nil {
+			return err // fixme
+		}
+		fmt.Println(string(raw))
+		return nil
+	}
+
+	// FIXME
 	return nil
 }

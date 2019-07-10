@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"os"
 
 	"github.com/adrianosela/cliprepd/app"
@@ -12,6 +12,7 @@ var version string
 
 func main() {
 	if err := app.New(version).Run(os.Args); err != nil {
-		log.Fatalf("error: %s", err)
+		fmt.Print(err)
+		os.Exit(1)
 	}
 }
