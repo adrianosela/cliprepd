@@ -24,6 +24,7 @@ var appflags = []cli.Flag{
 
 var appcmds = []cli.Command{
 	commands.ViolationCmd,
+	commands.ReputationCmd,
 	commands.HeartbeatCmd,
 	commands.LBHeartbeatCmd,
 	commands.DumpCmd,

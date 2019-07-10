@@ -29,3 +29,7 @@ func NewIPrepd(url, token string, httpClient *http.Client) (*IPrepd, error) {
 		httpClient: httpClient,
 	}, nil
 }
+
+func (c *IPrepd) addAuth(r *http.Request) {
+	r.Header.Set("Authorization", c.authTk)
+}

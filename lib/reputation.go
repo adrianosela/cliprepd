@@ -2,7 +2,6 @@ package lib
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -10,9 +9,9 @@ import (
 	"go.mozilla.org/iprepd"
 )
 
-// Dump retrieves all reputation entries
-func (c *IPrepd) Dump() ([]iprepd.Reputation, error) {
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/dump", c.hostURL), nil)
+// GetReputation fetches the reputation of a given object and type
+func (c *IPrepd) GetReputation(objectType, object string) (*iprepd.Reputation, error) {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/type/%s/%s", c.hostURL, objectType, object), nil)
 	if err != nil {
 		return nil, fmt.Errorf("could not build http request: %s", err)
 	}
@@ -22,16 +21,16 @@ func (c *IPrepd) Dump() ([]iprepd.Reputation, error) {
 		return nil, fmt.Errorf("could not send http request: %s", err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("non 200 status code: %s")
+		return nil, fmt.Errorf("non 200 status code received: %d", resp.StatusCode)
 	}
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	byt, err := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 	if err != nil {
 		return nil, fmt.Errorf("could not read response body: %s", err)
 	}
-	var ret []iprepd.Reputation
-	if err = json.Unmarshal(bodyBytes, &ret); err != nil {
+	var r *iprepd.Reputation
+	if err := json.Unmarshal(byt, &r); err != nil {
 		return nil, fmt.Errorf("could not unmarshal response body: %s", err)
 	}
-	return ret, nil
+	return r, nil
 }

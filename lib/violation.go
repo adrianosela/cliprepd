@@ -20,7 +20,7 @@ func (c *IPrepd) ApplyViolation(vr *iprepd.ViolationRequest) error {
 	if err != nil {
 		return fmt.Errorf("could not build http request: %s", err)
 	}
-	req.Header.Set("Authorization", c.authTk)
+	c.addAuth(req)
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("could not send http request: %s", err)
