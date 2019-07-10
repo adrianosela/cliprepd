@@ -23,11 +23,12 @@ var appflags = []cli.Flag{
 }
 
 var appcmds = []cli.Command{
-	config.ConfigCmd,
+	commands.ViolationCmd,
 	commands.HeartbeatCmd,
 	commands.LBHeartbeatCmd,
 	commands.DumpCmd,
 	commands.VersionCmd,
+	config.ConfigCmd,
 }
 
 func main() {
