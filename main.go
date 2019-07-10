@@ -26,6 +26,7 @@ var appcmds = []cli.Command{
 	commands.HeartbeatCmd,
 	commands.LBHeartbeatCmd,
 	commands.VersionCmd,
+	commands.DumpCmd,
 }
 
 func main() {
