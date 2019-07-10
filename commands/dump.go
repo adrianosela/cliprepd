@@ -34,6 +34,10 @@ func dumpCmdHandler(ctx *cli.Context) error {
 		return fmt.Errorf("could not retrieve reputation entries: %s", err)
 	}
 
+	if len(entries) == 0 {
+		return nil
+	}
+
 	if ctx.BoolT("json") {
 		raw, err := json.Marshal(entries)
 		if err != nil {
