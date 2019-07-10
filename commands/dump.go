@@ -48,9 +48,9 @@ func dumpCmdHandler(ctx *cli.Context) error {
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"IP", "SCORE"})
+	table.SetHeader([]string{"TYPE", "OBJECT", "SCORE"})
 	for _, entry := range entries {
-		table.Append([]string{entry.IP, strconv.Itoa(entry.Reputation)})
+		table.Append([]string{entry.Type, entry.Object, strconv.Itoa(entry.Reputation)})
 	}
 	table.Render()
 
