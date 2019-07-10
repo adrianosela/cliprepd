@@ -9,6 +9,14 @@ Command line client for [IPrepd](https://github.com/mozilla-services/iprepd)
 
 ### Getting started
 
+On unix systems, build with ```make```:
+
+```
+$ make
+go build -ldflags "-X main.version=0.1.0-7a96e4e" -o repd
+cp repd /usr/local/bin
+```
+
 Set your local configuration with ```repd config set```:
 
 ```
