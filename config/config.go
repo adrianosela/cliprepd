@@ -13,14 +13,25 @@ import (
 
 const defaultConfigFilePath = "/.repd"
 
-// Config represents the necessary configuration for the CLI
 type config struct {
 	HostURL string `json:"host_url"`
 	AuthTK  string `json:"auth_token"`
 }
 
-// SetConfig writes the given config values to the file in the given path
-func SetConfig(url, tk, path string) error {
+// GetClient returns an IPrepd client populated with the correct config
+func GetClient(ctx *cli.Context) (*lib.IPrepd, error) {
+	cPath := ctx.GlobalString("config")
+	if cPath == "" {
+		cPath = defaultConfigFilePath
+	}
+	config, err := readFSConfig(cPath)
+	if err != nil {
+		return nil, err
+	}
+	return lib.NewIPrepd(config.HostURL, config.AuthTK, nil)
+}
+
+func setConfig(url, tk, path string) error {
 	if url == "" {
 		return errors.New("url cannot be empty")
 	}
@@ -42,19 +53,6 @@ func SetConfig(url, tk, path string) error {
 		return fmt.Errorf("could not write configuration file: %s", err)
 	}
 	return nil
-}
-
-// GetClient returns an IPrepd client populated with the correct config
-func GetClient(ctx *cli.Context) (*lib.IPrepd, error) {
-	cPath := ctx.GlobalString("config")
-	if cPath == "" {
-		cPath = defaultConfigFilePath
-	}
-	config, err := readFSConfig(cPath)
-	if err != nil {
-		return nil, err
-	}
-	return lib.NewIPrepd(config.HostURL, config.AuthTK, nil)
 }
 
 func readFSConfig(path string) (*config, error) {
