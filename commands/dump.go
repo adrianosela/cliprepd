@@ -13,7 +13,8 @@ import (
 
 // DumpCmd is the CLI command object for the dump operation
 var DumpCmd = cli.Command{
-	Name: "dump",
+	Name:  "dump",
+	Usage: "dump all available reputation entries",
 	Flags: []cli.Flag{
 		jsonFlag,
 	},

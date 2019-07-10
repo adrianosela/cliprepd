@@ -10,6 +10,7 @@ import (
 // HeartbeatCmd is the CLI command object for the Heartbeat operation
 var HeartbeatCmd = cli.Command{
 	Name:   "heartbeat",
+	Usage:  "http healthcheck endpoint check",
 	Action: heartbeatHandler,
 	Hidden: true,
 }

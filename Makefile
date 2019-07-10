@@ -9,3 +9,6 @@ setbin: build
 
 build:
 	go build -ldflags "-X main.version=$(VERSION)-$(RELEASE)" -o repd
+
+lint:
+	go list ./... | grep -v /vendor/ | xargs -L1 golint

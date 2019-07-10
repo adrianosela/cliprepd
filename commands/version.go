@@ -12,7 +12,8 @@ import (
 
 // VersionCmd is the CLI command object for the Version operation
 var VersionCmd = cli.Command{
-	Name: "version",
+	Name:  "version",
+	Usage: "get the iprepd version of the server",
 	Flags: []cli.Flag{
 		jsonFlag,
 	},

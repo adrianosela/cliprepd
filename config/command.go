@@ -11,10 +11,12 @@ import (
 
 // ConfigCmd is the CLI command object for the config operation
 var ConfigCmd = cli.Command{
-	Name: "config",
+	Name:  "config",
+	Usage: "configure command line tool",
 	Subcommands: []cli.Command{
 		cli.Command{
-			Name: "set",
+			Name:  "set",
+			Usage: "create configuration file with given options",
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "path, p",
@@ -34,7 +36,8 @@ var ConfigCmd = cli.Command{
 			Action: setHandler,
 		},
 		cli.Command{
-			Name: "show",
+			Name:  "show",
+			Usage: "show contents of set configuration file",
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "path, p",

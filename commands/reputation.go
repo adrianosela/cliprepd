@@ -16,24 +16,28 @@ import (
 
 // ReputationCmd is the CLI command object for reputation operations
 var ReputationCmd = cli.Command{
-	Name: "reputation",
+	Name:  "reputation",
+	Usage: "reputation entry related commands",
 	Subcommands: []cli.Command{
 		cli.Command{
 			Name:   "get",
+			Usage:  "get the entry for a given object",
 			Flags:  append(reputationBaseFlags, reputationGetFlags...),
-			Before: reputationBaseFlagValidator,
+			Before: reputationBaseValidator,
 			Action: reputationGetHandler,
 		},
 		cli.Command{
 			Name:   "clear",
+			Usage:  "delete the entry for a given object",
 			Flags:  reputationBaseFlags,
-			Before: reputationBaseFlagValidator,
+			Before: reputationBaseValidator,
 			Action: reputationClearHandler,
 		},
 		cli.Command{
 			Name:   "set",
+			Usage:  "update the entry for a given object",
 			Flags:  append(reputationBaseFlags, reputationSetFlags...),
-			Before: reputationSetFlagValidator,
+			Before: reputationSetValidator,
 			Action: reputationSetHandler,
 		},
 	},
@@ -66,18 +70,18 @@ var reputationSetFlags = []cli.Flag{
 	},
 }
 
-func reputationBaseFlagValidator(ctx *cli.Context) error {
+func reputationBaseValidator(ctx *cli.Context) error {
 	if ctx.String("object") == "" {
 		return errors.New("missing [mandatory] argument \"object\"")
 	}
 	return nil
 }
 
-func reputationSetFlagValidator(ctx *cli.Context) error {
+func reputationSetValidator(ctx *cli.Context) error {
 	if !ctx.IsSet("score") {
 		return errors.New("missing [mandatory] argument \"score\"")
 	}
-	return reputationBaseFlagValidator(ctx)
+	return reputationBaseValidator(ctx)
 }
 
 func reputationGetHandler(ctx *cli.Context) error {
