@@ -19,21 +19,21 @@ var ReputationCmd = cli.Command{
 	Name:  "reputation",
 	Usage: "reputation entry related commands",
 	Subcommands: []cli.Command{
-		cli.Command{
+		{
 			Name:   "get",
 			Usage:  "get the entry for a given object",
 			Flags:  append(reputationBaseFlags, reputationGetFlags...),
 			Before: reputationBaseValidator,
 			Action: reputationGetHandler,
 		},
-		cli.Command{
+		{
 			Name:   "clear",
 			Usage:  "delete the entry for a given object",
 			Flags:  reputationBaseFlags,
 			Before: reputationBaseValidator,
 			Action: reputationClearHandler,
 		},
-		cli.Command{
+		{
 			Name:   "set",
 			Usage:  "update the entry for a given object",
 			Flags:  append(reputationBaseFlags, reputationSetFlags...),
@@ -125,7 +125,7 @@ func reputationClearHandler(ctx *cli.Context) error {
 	if err := client.DeleteReputation(typ, obj); err != nil {
 		return fmt.Errorf("could not delete reputation for %s %s: %s", typ, obj, err)
 	}
-	fmt.Printf("reputation for %s %s deleted succesfully!\n", typ, obj)
+	fmt.Printf("reputation for %s %s deleted successfully!\n", typ, obj)
 	return nil
 }
 
@@ -147,6 +147,6 @@ func reputationSetHandler(ctx *cli.Context) error {
 	}); err != nil {
 		return fmt.Errorf("could not update reputation for %s %s: %s", typ, obj, err)
 	}
-	fmt.Printf("reputation for %s %s updated succesfully!\n", typ, obj)
+	fmt.Printf("reputation for %s %s updated successfully!\n", typ, obj)
 	return nil
 }

@@ -14,7 +14,7 @@ var ConfigCmd = cli.Command{
 	Name:  "config",
 	Usage: "configure command line tool",
 	Subcommands: []cli.Command{
-		cli.Command{
+		{
 			Name:  "set",
 			Usage: "create configuration file with given options",
 			Flags: []cli.Flag{
@@ -35,7 +35,7 @@ var ConfigCmd = cli.Command{
 			Before: setFlagValidator,
 			Action: setHandler,
 		},
-		cli.Command{
+		{
 			Name:  "show",
 			Usage: "show contents of set configuration file",
 			Flags: []cli.Flag{

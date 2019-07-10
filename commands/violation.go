@@ -19,7 +19,7 @@ var ViolationCmd = cli.Command{
 	Name:  "violation",
 	Usage: "violation related commands",
 	Subcommands: []cli.Command{
-		cli.Command{
+		{
 			Name:  "get",
 			Usage: "show all available violations",
 			Flags: []cli.Flag{
@@ -27,7 +27,7 @@ var ViolationCmd = cli.Command{
 			},
 			Action: violationGetHandler,
 		},
-		cli.Command{
+		{
 			Name:  "apply",
 			Usage: "apply a single violation to a given object",
 			Flags: []cli.Flag{
@@ -52,7 +52,7 @@ var ViolationCmd = cli.Command{
 			Before: violationApplyValidator,
 			Action: violationApplyHandler,
 		},
-		cli.Command{
+		{
 			Name:        "batch-apply",
 			Description: "see https://github.com/mozilla-services/iprepd#put-violationstypeip for payload format",
 			Usage:       "batch-apply violations in a json file",
