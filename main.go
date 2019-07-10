@@ -13,10 +13,6 @@ var version string // injected at build-time
 
 var appflags = []cli.Flag{
 	cli.BoolFlag{
-		Name:  "verbose, vv",
-		Usage: "display all errors fully",
-	},
-	cli.BoolFlag{
 		Name:  "dry-run, d",
 		Usage: "show, dont do",
 	},
