@@ -18,5 +18,14 @@ func lbheartbeatHandler(ctx *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("could not initialize client: %s", err)
 	}
-	return client.LBHeartbeat()
+	ok, err := client.LBHeartbeat()
+	if err != nil {
+		return fmt.Errorf("could not check heartbeat: %s", err)
+	}
+	if ok {
+		fmt.Println("[OK] the server is reachable via HTTP")
+	} else {
+		fmt.Println("[PROBLEM] the server is NOT reachable via HTTP")
+	}
+	return nil
 }

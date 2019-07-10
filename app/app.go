@@ -9,12 +9,8 @@ import (
 
 var appflags = []cli.Flag{
 	cli.BoolFlag{
-		Name:  "json, j",
-		Usage: "print raw json -- don't pretty print",
-	},
-	cli.BoolFlag{
 		Name:  "verbose, vv",
-		Usage: "log server side error messages",
+		Usage: "display all errors fully",
 	},
 	cli.BoolFlag{
 		Name:  "dry-run, d",

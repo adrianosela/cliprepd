@@ -12,7 +12,7 @@ var version string
 
 func main() {
 	if err := app.New(version).Run(os.Args); err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 }

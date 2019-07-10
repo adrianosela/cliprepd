@@ -28,7 +28,7 @@ func SetConfig(url, tk, path string) error {
 		return errors.New("token cannot be empty")
 	}
 	if path == "" {
-		path = defaultConfigFilePath
+		path = fmt.Sprintf("%s", defaultConfigFilePath)
 	}
 	f, err := os.Create(path)
 	if err != nil {
@@ -52,7 +52,7 @@ func GetClient(ctx *cli.Context) (*lib.IPrepd, error) {
 	}
 	config, err := readFSConfig(cPath)
 	if err != nil {
-		return nil, fmt.Errorf("could not read configuration file: %s", err)
+		return nil, err
 	}
 	return lib.NewIPrepd(config.HostURL, config.AuthTK, nil)
 }

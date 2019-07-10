@@ -6,17 +6,14 @@ import (
 )
 
 // LBHeartbeat checks whether an IPrepd LB is healthy / reachable
-func (c *IPrepd) LBHeartbeat() error {
+func (c *IPrepd) LBHeartbeat() (bool, error) {
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/__lbheartbeat__", c.hostURL), nil)
 	if err != nil {
-		return fmt.Errorf("could not build http request: %s", err)
+		return false, fmt.Errorf("could not build http request: %s", err)
 	}
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("could not send http request: %s", err)
+		return false, fmt.Errorf("could not send http request: %s", err)
 	}
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code: expected 200, got %d", resp.StatusCode)
-	}
-	return nil
+	return (resp.StatusCode == http.StatusOK), nil
 }
