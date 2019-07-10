@@ -32,8 +32,8 @@ var ConfigCmd = cli.Command{
 					Usage: "[mandatory] auth token to use",
 				},
 			},
-			Before: setFlagValidator,
-			Action: setHandler,
+			Before: configSetValidator,
+			Action: configSetHandler,
 		},
 		{
 			Name:  "show",
@@ -45,12 +45,12 @@ var ConfigCmd = cli.Command{
 					Value: defaultConfigFilePath,
 				},
 			},
-			Action: showHandler,
+			Action: configShowHandler,
 		},
 	},
 }
 
-func setFlagValidator(ctx *cli.Context) error {
+func configSetValidator(ctx *cli.Context) error {
 	if ctx.String("url") == "" {
 		return errors.New("missing [mandatory] argument \"url\"")
 	}
@@ -60,7 +60,7 @@ func setFlagValidator(ctx *cli.Context) error {
 	return nil
 }
 
-func setHandler(ctx *cli.Context) error {
+func configSetHandler(ctx *cli.Context) error {
 	if err := setConfig(
 		ctx.String("url"),
 		ctx.String("token"),
@@ -71,7 +71,7 @@ func setHandler(ctx *cli.Context) error {
 	return nil
 }
 
-func showHandler(ctx *cli.Context) error {
+func configShowHandler(ctx *cli.Context) error {
 	path := ctx.String("path")
 	c, err := readFSConfig(path)
 	if err != nil {

@@ -31,6 +31,18 @@ func GetClient(ctx *cli.Context) (*lib.IPrepd, error) {
 	return lib.NewIPrepd(config.HostURL, config.AuthTK, nil)
 }
 
+func readFSConfig(path string) (*config, error) {
+	dat, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("could not read configuration file %s: %s", path, err)
+	}
+	var c *config
+	if err = json.Unmarshal(dat, &c); err != nil {
+		return nil, fmt.Errorf("could not unmarshal config: %s", err)
+	}
+	return c, nil
+}
+
 func setConfig(url, tk, path string) error {
 	if url == "" {
 		return errors.New("url cannot be empty")
@@ -53,16 +65,4 @@ func setConfig(url, tk, path string) error {
 		return fmt.Errorf("could not write configuration file: %s", err)
 	}
 	return nil
-}
-
-func readFSConfig(path string) (*config, error) {
-	dat, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, fmt.Errorf("could not read configuration file %s: %s", path, err)
-	}
-	var c *config
-	if err = json.Unmarshal(dat, &c); err != nil {
-		return nil, fmt.Errorf("could not unmarshal config: %s", err)
-	}
-	return c, nil
 }
