@@ -49,17 +49,22 @@ func violationFlagValidator(ctx *cli.Context) error {
 }
 
 func violationHandler(ctx *cli.Context) error {
+	obj := ctx.String("object")
+	typ := ctx.String("type")
+	vio := ctx.String("violation")
+
 	client, err := config.GetClient(ctx)
 	if err != nil {
 		return fmt.Errorf("could not initialize client: %s", err)
 	}
 	if err = client.ApplyViolation(&iprepd.ViolationRequest{
-		Object:           ctx.String("object"),
-		Type:             ctx.String("type"),
-		Violation:        ctx.String("violation"),
+		Object:           obj,
+		Type:             typ,
+		Violation:        vio,
 		SuppressRecovery: ctx.Int("suppress-recovery"),
 	}); err != nil {
 		return fmt.Errorf("could not apply violation: %s", err)
 	}
+	fmt.Printf("violation %s successfully applied to %s %s!\n", vio, typ, obj)
 	return nil
 }

@@ -15,23 +15,38 @@ import (
 // ReputationCmd is the CLI command object for reputation operations
 var ReputationCmd = cli.Command{
 	Name: "reputation",
-	Flags: []cli.Flag{
-		cli.StringFlag{
-			Name:  "object, o",
-			Usage: "[mandatory] object to apply violation to",
+	Subcommands: []cli.Command{
+		cli.Command{
+			Name: "get",
+			Flags: append(reputationSubcmdFlags, cli.BoolFlag{
+				Name:  "json, j",
+				Usage: "print raw json -- don't pretty print",
+			}),
+			Before: reputationFlagValidator,
+			Action: reputationGetHandler,
 		},
-		cli.StringFlag{
-			Name:  "type, t",
-			Usage: "type of object",
-			Value: "ip", // default to IP
+		cli.Command{
+			Name:   "clear",
+			Flags:  reputationSubcmdFlags,
+			Before: reputationFlagValidator,
+			Action: reputationClearHandler,
 		},
-		cli.BoolFlag{
-			Name:  "json, j",
-			Usage: "print raw json -- don't pretty print",
+		cli.Command{
+			Name: "set",
 		},
 	},
-	Before: reputationFlagValidator,
-	Action: reputationHandler,
+}
+
+var reputationSubcmdFlags = []cli.Flag{
+	cli.StringFlag{
+		Name:  "object, o",
+		Usage: "[mandatory] object to apply violation to",
+	},
+	cli.StringFlag{
+		Name:  "type, t",
+		Usage: "type of object",
+		Value: "ip", // default to IP
+	},
 }
 
 func reputationFlagValidator(ctx *cli.Context) error {
@@ -41,7 +56,7 @@ func reputationFlagValidator(ctx *cli.Context) error {
 	return nil
 }
 
-func reputationHandler(ctx *cli.Context) error {
+func reputationGetHandler(ctx *cli.Context) error {
 	typ := ctx.String("type")
 	obj := ctx.String("object")
 
@@ -73,5 +88,20 @@ func reputationHandler(ctx *cli.Context) error {
 	table.Append([]string{"DECAY AFTER", rept.DecayAfter.String()})
 	table.Render()
 
+	return nil
+}
+
+func reputationClearHandler(ctx *cli.Context) error {
+	typ := ctx.String("type")
+	obj := ctx.String("object")
+
+	client, err := config.GetClient(ctx)
+	if err != nil {
+		return fmt.Errorf("could not initialize client: %s", err)
+	}
+	if err := client.DeleteReputation(typ, obj); err != nil {
+		return fmt.Errorf("could not delete reputation for %s=%s", typ, obj)
+	}
+	fmt.Printf("reputation for %s %s deleted succesfully!\n", typ, obj)
 	return nil
 }

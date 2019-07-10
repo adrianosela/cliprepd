@@ -34,16 +34,22 @@ func dumpCmdHandler(ctx *cli.Context) error {
 		return fmt.Errorf("could not retrieve reputation entries: %s", err)
 	}
 
-	if len(entries) == 0 {
-		return nil
-	}
-
 	if ctx.BoolT("json") {
+		if len(entries) == 0 {
+			// ensure array format, i.e. ensure we dont print "nil"
+			fmt.Println("[]")
+			return nil
+		}
 		raw, err := json.Marshal(entries)
 		if err != nil {
 			return fmt.Errorf("could not format response payload: %s", err)
 		}
 		fmt.Println(string(raw))
+		return nil
+	}
+
+	if len(entries) == 0 {
+		fmt.Println("-- no entries to show --")
 		return nil
 	}
 
