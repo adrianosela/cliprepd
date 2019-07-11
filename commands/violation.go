@@ -28,7 +28,7 @@ var ViolationCmd = cli.Command{
 		},
 		{
 			Name:  "apply",
-			Usage: "apply a single violation to a given object",
+			Usage: "apply a violation to a single object",
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "violation, vn",
