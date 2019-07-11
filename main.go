@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/adrianosela/cliprepd/commands"
-	"github.com/adrianosela/cliprepd/config"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
@@ -29,7 +28,7 @@ var appcmds = []cli.Command{
 	commands.LBHeartbeatCmd,
 	commands.DumpCmd,
 	commands.VersionCmd,
-	config.ConfigCmd,
+	commands.ConfigCmd,
 }
 
 func main() {

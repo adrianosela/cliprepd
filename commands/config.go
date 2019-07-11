@@ -1,10 +1,11 @@
-package config
+package commands
 
 import (
 	"errors"
 	"fmt"
 	"os"
 
+	"github.com/adrianosela/cliprepd/config"
 	"github.com/olekukonko/tablewriter"
 	cli "gopkg.in/urfave/cli.v1"
 )
@@ -21,7 +22,7 @@ var ConfigCmd = cli.Command{
 				cli.StringFlag{
 					Name:  "path, p",
 					Usage: "where to save config file",
-					Value: defaultConfigFilePath,
+					Value: config.DefaultConfigFilePath,
 				},
 				cli.StringFlag{
 					Name:  "url, u",
@@ -42,7 +43,7 @@ var ConfigCmd = cli.Command{
 				cli.StringFlag{
 					Name:  "path, p",
 					Usage: "configuration file path",
-					Value: defaultConfigFilePath,
+					Value: config.DefaultConfigFilePath,
 				},
 			},
 			Action: configShowHandler,
@@ -61,7 +62,7 @@ func configSetValidator(ctx *cli.Context) error {
 }
 
 func configSetHandler(ctx *cli.Context) error {
-	if err := setConfig(
+	if err := config.SetConfig(
 		ctx.String("url"),
 		ctx.String("token"),
 		ctx.String("path"),
@@ -73,7 +74,7 @@ func configSetHandler(ctx *cli.Context) error {
 
 func configShowHandler(ctx *cli.Context) error {
 	path := ctx.String("path")
-	c, err := readFSConfig(path)
+	c, err := config.GetConfig(path)
 	if err != nil {
 		return fmt.Errorf("could not retrive configuration from %s: %s", path, err)
 	}
