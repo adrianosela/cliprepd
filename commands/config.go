@@ -19,8 +19,8 @@ var ConfigCmd = cli.Command{
 			Usage: "create configuration file with given options",
 			Flags: []cli.Flag{
 				withDefault(pathFlag, config.DefaultConfigFilePath),
-				setMandatory(urlFlag),
-				setMandatory(tokenFlag),
+				asMandatory(urlFlag),
+				asMandatory(tokenFlag),
 			},
 			Before: configSetValidator,
 			Action: configSetHandler,

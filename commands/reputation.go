@@ -43,7 +43,7 @@ var ReputationCmd = cli.Command{
 
 var reputationBaseFlags = []cli.Flag{
 	withDefault(typeFlag, "ip"),
-	setMandatory(objectFlag),
+	asMandatory(objectFlag),
 }
 
 var reputationGetFlags = []cli.Flag{
@@ -51,7 +51,7 @@ var reputationGetFlags = []cli.Flag{
 }
 
 var reputationSetFlags = []cli.Flag{
-	setMandatoryInt(scoreFlag),
+	asMandatoryInt(scoreFlag),
 	withDefaultInt(decayAfterFlag, 0),
 }
 

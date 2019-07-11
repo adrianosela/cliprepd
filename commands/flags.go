@@ -70,12 +70,12 @@ func withDefaultInt(f cli.IntFlag, def int) cli.IntFlag {
 	return f
 }
 
-func setMandatory(f cli.StringFlag) cli.StringFlag {
+func asMandatory(f cli.StringFlag) cli.StringFlag {
 	f.Usage = fmt.Sprintf("%s %s", mandatory, f.Usage)
 	return f
 }
 
-func setMandatoryInt(f cli.IntFlag) cli.IntFlag {
+func asMandatoryInt(f cli.IntFlag) cli.IntFlag {
 	f.Usage = fmt.Sprintf("%s %s", mandatory, f.Usage)
 	return f
 }

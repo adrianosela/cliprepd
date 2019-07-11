@@ -29,8 +29,8 @@ var ViolationCmd = cli.Command{
 			Name:  "apply",
 			Usage: "apply a violation to a single object",
 			Flags: []cli.Flag{
-				setMandatory(violationFlag),
-				setMandatory(objectFlag),
+				asMandatory(violationFlag),
+				asMandatory(objectFlag),
 				withDefault(typeFlag, "ip"),
 				withDefaultInt(suppressRecoveryFlag, 0),
 			},
@@ -42,7 +42,7 @@ var ViolationCmd = cli.Command{
 			Description: "see https://github.com/mozilla-services/iprepd#put-violationstypeip for payload format",
 			Usage:       "batch-apply violations in a json file",
 			Flags: []cli.Flag{
-				setMandatory(payloadFlag),
+				asMandatory(payloadFlag),
 				withDefault(typeFlag, "ip"),
 			},
 			Before: violationBatchApplyValidator,
