@@ -39,7 +39,7 @@ var (
 		Usage: "type of object e.g. ip/email",
 	}
 	suppressRecoveryFlag = cli.IntFlag{
-		Name:  "suppress-recovery, sr",
+		Name:  "suppress-recovery, r",
 		Usage: "seconds before object's reputation begins to heal",
 	}
 	scoreFlag = cli.IntFlag{
@@ -51,7 +51,7 @@ var (
 		Usage: "path to payload file",
 	}
 	violationFlag = cli.StringFlag{
-		Name:  "violation, vn",
+		Name:  "violation, v",
 		Usage: "name of violation to be applied",
 	}
 	decayAfterFlag = cli.IntFlag{
