@@ -80,6 +80,7 @@ func violationBatchApplyValidator(ctx *cli.Context) error {
 	); err != nil {
 		return fmt.Errorf("could not validate payload file: %s", err)
 	}
+
 	return nil
 }
 
@@ -97,7 +98,7 @@ func readPayloadFile(path, format, objectType, violation string) ([]iprepd.Viola
 			return nil, fmt.Errorf("could not read payload file %s: %s", path, err)
 		}
 		if err = json.Unmarshal(dat, &vrs); err != nil {
-			return nil, fmt.Errorf("could not unmarshal payload file: %s", err)
+			return nil, fmt.Errorf("could not unmarshal payload file - is it valid json?: %s", err)
 		}
 		return vrs, nil
 	case payloadFormatList:
@@ -192,5 +193,6 @@ func violationBatchApplyHandler(ctx *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("could not batch apply violations: %s", err)
 	}
+	fmt.Printf("violation %s successfully applied to %s batch in %s!\n", viol, typ, path)
 	return nil
 }
