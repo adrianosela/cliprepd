@@ -17,8 +17,3 @@ func getClient(ctx *cli.Context) (*lib.IPrepd, error) {
 	}
 	return lib.NewIPrepd(config.HostURL, config.AuthTK, nil)
 }
-
-var jsonFlag = cli.BoolFlag{
-	Name:  "json, j",
-	Usage: "print raw json -- don't pretty print",
-}

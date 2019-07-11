@@ -2,7 +2,6 @@ package commands
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -24,29 +23,16 @@ var ViolationCmd = cli.Command{
 			Flags: []cli.Flag{
 				jsonFlag,
 			},
-			Action: violationGetHandler,
+			Action: violationListHandler,
 		},
 		{
 			Name:  "apply",
 			Usage: "apply a violation to a single object",
 			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "violation, vn",
-					Usage: "[mandatory] name of violation to be applied",
-				},
-				cli.StringFlag{
-					Name:  "object, o",
-					Usage: "[mandatory] object to apply violation to",
-				},
-				cli.StringFlag{
-					Name:  "type, t",
-					Usage: "[mandatory] type of object e.g. ip/email",
-				},
-				cli.IntFlag{
-					Name:  "suppress-recovery, sr",
-					Usage: "seconds to wait before reputation begins to heal for object",
-					Value: 0,
-				},
+				setMandatory(violationFlag),
+				setMandatory(objectFlag),
+				withDefault(typeFlag, "ip"),
+				withDefaultInt(suppressRecoveryFlag, 0),
 			},
 			Before: violationApplyValidator,
 			Action: violationApplyHandler,
@@ -56,15 +42,8 @@ var ViolationCmd = cli.Command{
 			Description: "see https://github.com/mozilla-services/iprepd#put-violationstypeip for payload format",
 			Usage:       "batch-apply violations in a json file",
 			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "payload, p",
-					Usage: "[mandatory] path to payload file",
-				},
-				cli.StringFlag{
-					Name:  "type, t",
-					Usage: "type of objects e.g. ip/email",
-					Value: "ip",
-				},
+				setMandatory(payloadFlag),
+				withDefault(typeFlag, "ip"),
 			},
 			Before: violationBatchApplyValidator,
 			Action: violationBatchApplyHandler,
@@ -73,23 +52,19 @@ var ViolationCmd = cli.Command{
 }
 
 func violationApplyValidator(ctx *cli.Context) error {
-	if ctx.String("violation") == "" {
-		return errors.New("missing [mandatory] argument \"violation\"")
-	}
-	if ctx.String("object") == "" {
-		return errors.New("missing [mandatory] argument \"object\"")
-	}
-	if ctx.String("type") == "" {
-		return errors.New("missing [mandatory] argument \"type\"")
-	}
-	return nil
+	return assertSet(ctx,
+		"violation",
+		"object",
+		"type",
+		"suppress-recovery",
+	)
 }
 
 func violationBatchApplyValidator(ctx *cli.Context) error {
-	path := ctx.String("payload")
-	if path == "" {
-		return errors.New("missing [mandatory] argument \"payload\"")
+	if err := assertSet(ctx, "payload"); err != nil {
+		return err
 	}
+	path := ctx.String("payload")
 	if _, err := readPayloadFile(path); err != nil {
 		return fmt.Errorf("could not validate payload file: %s", err)
 	}
@@ -108,7 +83,7 @@ func readPayloadFile(path string) ([]iprepd.ViolationRequest, error) {
 	return vrs, nil
 }
 
-func violationGetHandler(ctx *cli.Context) error {
+func violationListHandler(ctx *cli.Context) error {
 	client, err := getClient(ctx)
 	if err != nil {
 		return fmt.Errorf("could not initialize client: %s", err)
@@ -150,6 +125,7 @@ func violationApplyHandler(ctx *cli.Context) error {
 	obj := ctx.String("object")
 	typ := ctx.String("type")
 	vio := ctx.String("violation")
+	sr := ctx.Int("suppress-recovery")
 
 	client, err := getClient(ctx)
 	if err != nil {
@@ -159,7 +135,7 @@ func violationApplyHandler(ctx *cli.Context) error {
 		Object:           obj,
 		Type:             typ,
 		Violation:        vio,
-		SuppressRecovery: ctx.Int("suppress-recovery"),
+		SuppressRecovery: sr,
 	}); err != nil {
 		return fmt.Errorf("could not apply violation: %s", err)
 	}
@@ -170,9 +146,6 @@ func violationApplyHandler(ctx *cli.Context) error {
 func violationBatchApplyHandler(ctx *cli.Context) error {
 	typ := ctx.String("type")
 	path := ctx.String("payload")
-	if path == "" {
-		return errors.New("missing [mandatory] argument \"payload\"")
-	}
 	violreqs, err := readPayloadFile(path)
 	if err != nil {
 		return fmt.Errorf("could not validate payload file: %s", err)

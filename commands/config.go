@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -19,19 +18,9 @@ var ConfigCmd = cli.Command{
 			Name:  "set",
 			Usage: "create configuration file with given options",
 			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "path, p",
-					Usage: "where to save config file",
-					Value: config.DefaultConfigFilePath,
-				},
-				cli.StringFlag{
-					Name:  "url, u",
-					Usage: "[mandatory] host URL to use",
-				},
-				cli.StringFlag{
-					Name:  "token, t",
-					Usage: "[mandatory] auth token to use",
-				},
+				withDefault(pathFlag, config.DefaultConfigFilePath),
+				setMandatory(urlFlag),
+				setMandatory(tokenFlag),
 			},
 			Before: configSetValidator,
 			Action: configSetHandler,
@@ -40,11 +29,7 @@ var ConfigCmd = cli.Command{
 			Name:  "show",
 			Usage: "show contents of set configuration file",
 			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "path, p",
-					Usage: "configuration file path",
-					Value: config.DefaultConfigFilePath,
-				},
+				withDefault(pathFlag, config.DefaultConfigFilePath),
 			},
 			Action: configShowHandler,
 		},
@@ -52,13 +37,7 @@ var ConfigCmd = cli.Command{
 }
 
 func configSetValidator(ctx *cli.Context) error {
-	if ctx.String("url") == "" {
-		return errors.New("missing [mandatory] argument \"url\"")
-	}
-	if ctx.String("token") == "" {
-		return errors.New("missing [mandatory] argument \"token\"")
-	}
-	return nil
+	return assertSet(ctx, "url", "token", "path")
 }
 
 func configSetHandler(ctx *cli.Context) error {

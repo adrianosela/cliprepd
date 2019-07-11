@@ -2,7 +2,6 @@ package commands
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -43,15 +42,8 @@ var ReputationCmd = cli.Command{
 }
 
 var reputationBaseFlags = []cli.Flag{
-	cli.StringFlag{
-		Name:  "object, o",
-		Usage: "[mandatory] object to apply violation to",
-	},
-	cli.StringFlag{
-		Name:  "type, t",
-		Usage: "type of object",
-		Value: "ip", // default to IP
-	},
+	withDefault(typeFlag, "ip"),
+	setMandatory(objectFlag),
 }
 
 var reputationGetFlags = []cli.Flag{
@@ -59,26 +51,23 @@ var reputationGetFlags = []cli.Flag{
 }
 
 var reputationSetFlags = []cli.Flag{
-	cli.IntFlag{
-		Name:  "score, s",
-		Usage: "[mandatory] reputation score to assign ",
-	},
-	cli.IntFlag{
-		Name:  "decay-after, d",
-		Usage: "seconds after which reputation should begin to recover",
-	},
+	setMandatoryInt(scoreFlag),
+	withDefaultInt(decayAfterFlag, 0),
 }
 
 func reputationBaseValidator(ctx *cli.Context) error {
-	if ctx.String("object") == "" {
-		return errors.New("missing [mandatory] argument \"object\"")
-	}
-	return nil
+	return assertSet(ctx,
+		"object",
+		"type",
+	)
 }
 
 func reputationSetValidator(ctx *cli.Context) error {
-	if !ctx.IsSet("score") {
-		return errors.New("missing [mandatory] argument \"score\"")
+	if err := assertSet(ctx,
+		"score",
+		"decay-after",
+	); err != nil {
+		return err
 	}
 	return reputationBaseValidator(ctx)
 }
