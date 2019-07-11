@@ -29,7 +29,7 @@ func versionHandler(ctx *cli.Context) error {
 		return fmt.Errorf("could not get server version: %s", err)
 	}
 
-	if ctx.BoolT("json") {
+	if ctx.BoolT(name(jsonFlag)) {
 		raw, err := json.Marshal(resp)
 		if err != nil {
 			return fmt.Errorf("could not format response payload: %s", err)

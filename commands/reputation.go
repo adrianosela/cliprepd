@@ -57,20 +57,20 @@ var reputationSetFlags = []cli.Flag{
 
 func reputationBaseValidator(ctx *cli.Context) error {
 	return assertSet(ctx,
-		"object",
+		objectFlag,
 	)
 }
 
 func reputationSetValidator(ctx *cli.Context) error {
-	if err := assertSet(ctx, "score"); err != nil {
+	if err := assertSet(ctx, scoreFlag); err != nil {
 		return err
 	}
 	return reputationBaseValidator(ctx)
 }
 
 func reputationGetHandler(ctx *cli.Context) error {
-	typ := ctx.String("type")
-	obj := ctx.String("object")
+	typ := ctx.String(name(typeFlag))
+	obj := ctx.String(name(objectFlag))
 
 	client, err := getClient(ctx)
 	if err != nil {
@@ -80,7 +80,7 @@ func reputationGetHandler(ctx *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("could not get reputation for %s=%s", typ, obj)
 	}
-	if ctx.BoolT("json") {
+	if ctx.BoolT(name(jsonFlag)) {
 		raw, err := json.Marshal(rept)
 		if err != nil {
 			return fmt.Errorf("could not format response payload: %s", err)
@@ -100,8 +100,8 @@ func reputationGetHandler(ctx *cli.Context) error {
 }
 
 func reputationClearHandler(ctx *cli.Context) error {
-	typ := ctx.String("type")
-	obj := ctx.String("object")
+	typ := ctx.String(name(typeFlag))
+	obj := ctx.String(name(objectFlag))
 	client, err := getClient(ctx)
 	if err != nil {
 		return fmt.Errorf("could not initialize client: %s", err)
@@ -114,10 +114,10 @@ func reputationClearHandler(ctx *cli.Context) error {
 }
 
 func reputationSetHandler(ctx *cli.Context) error {
-	typ := ctx.String("type")
-	obj := ctx.String("object")
-	rep := ctx.Int("score")
-	da := ctx.Int("decay-after")
+	typ := ctx.String(name(typeFlag))
+	obj := ctx.String(name(objectFlag))
+	rep := ctx.Int(name(scoreFlag))
+	da := ctx.Int(name(decayAfterFlag))
 
 	client, err := getClient(ctx)
 	if err != nil {

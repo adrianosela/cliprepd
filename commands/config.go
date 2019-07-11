@@ -37,14 +37,14 @@ var ConfigCmd = cli.Command{
 }
 
 func configSetValidator(ctx *cli.Context) error {
-	return assertSet(ctx, "url", "token")
+	return assertSet(ctx, urlFlag, tokenFlag)
 }
 
 func configSetHandler(ctx *cli.Context) error {
 	if err := config.SetConfig(
-		ctx.String("url"),
-		ctx.String("token"),
-		ctx.String("path"),
+		ctx.String(name(urlFlag)),
+		ctx.String(name(tokenFlag)),
+		ctx.String(name(pathFlag)),
 	); err != nil {
 		return fmt.Errorf("could not set configuration: %s", err)
 	}
@@ -52,7 +52,7 @@ func configSetHandler(ctx *cli.Context) error {
 }
 
 func configShowHandler(ctx *cli.Context) error {
-	path := ctx.String("path")
+	path := ctx.String(name(pathFlag))
 	c, err := config.GetConfig(path)
 	if err != nil {
 		return fmt.Errorf("could not retrive configuration from %s: %s", path, err)

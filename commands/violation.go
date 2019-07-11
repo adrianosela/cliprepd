@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -43,7 +44,9 @@ var ViolationCmd = cli.Command{
 			Usage:       "batch-apply violations in a json file",
 			Flags: []cli.Flag{
 				asMandatory(payloadFlag),
-				withDefault(typeFlag, "ip"),
+				withDefault(payloadFmtFlag, payloadFormatJSON),
+				asMandatoryIf(typeFlag, fmt.Sprintf("%s=%s", name(payloadFmtFlag), payloadFormatList)),
+				asMandatoryIf(violationFlag, fmt.Sprintf("%s=%s", name(payloadFmtFlag), payloadFormatList)),
 			},
 			Before: violationBatchApplyValidator,
 			Action: violationBatchApplyHandler,
@@ -52,33 +55,64 @@ var ViolationCmd = cli.Command{
 }
 
 func violationApplyValidator(ctx *cli.Context) error {
-	return assertSet(ctx,
-		"violation",
-		"object",
-	)
+	return assertSet(ctx, violationFlag, objectFlag)
 }
 
 func violationBatchApplyValidator(ctx *cli.Context) error {
-	if err := assertSet(ctx, "payload"); err != nil {
+	if err := assertSet(ctx, payloadFlag); err != nil {
 		return err
 	}
-	path := ctx.String("payload")
-	if _, err := readPayloadFile(path); err != nil {
+	if err := assertSetIf(ctx, typeFlag, func() bool {
+		return ctx.String(name(payloadFmtFlag)) == payloadFormatList
+	}); err != nil {
+		return err
+	}
+	if err := assertSetIf(ctx, violationFlag, func() bool {
+		return ctx.String(name(payloadFmtFlag)) == payloadFormatList
+	}); err != nil {
+		return err
+	}
+	if _, err := readPayloadFile(
+		ctx.String(name(payloadFlag)),
+		ctx.String(name(payloadFmtFlag)),
+		ctx.String(name(typeFlag)),
+		ctx.String(name(violationFlag)),
+	); err != nil {
 		return fmt.Errorf("could not validate payload file: %s", err)
 	}
 	return nil
 }
 
-func readPayloadFile(path string) ([]iprepd.ViolationRequest, error) {
-	dat, err := ioutil.ReadFile(path)
+func readPayloadFile(path, format, objectType, violation string) ([]iprepd.ViolationRequest, error) {
+	file, err := os.Open(path)
+	defer file.Close()
 	if err != nil {
-		return nil, fmt.Errorf("could not read payload file %s: %s", path, err)
+		return nil, fmt.Errorf("could not open payload file %s: %s", path, err)
 	}
 	var vrs []iprepd.ViolationRequest
-	if err = json.Unmarshal(dat, &vrs); err != nil {
-		return nil, fmt.Errorf("could not unmarshal payload file: %s", err)
+	switch format {
+	case payloadFormatJSON:
+		dat, err := ioutil.ReadAll(file)
+		if err != nil {
+			return nil, fmt.Errorf("could not read payload file %s: %s", path, err)
+		}
+		if err = json.Unmarshal(dat, &vrs); err != nil {
+			return nil, fmt.Errorf("could not unmarshal payload file: %s", err)
+		}
+		return vrs, nil
+	case payloadFormatList:
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			vrs = append(vrs, iprepd.ViolationRequest{
+				Object:    scanner.Text(),
+				Type:      objectType,
+				Violation: violation,
+			})
+		}
+		return vrs, nil
+	default:
+		return nil, fmt.Errorf("invalid payload format \"%s\"", format)
 	}
-	return vrs, nil
 }
 
 func violationListHandler(ctx *cli.Context) error {
@@ -90,7 +124,7 @@ func violationListHandler(ctx *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("could not retrieve available violation: %s", err)
 	}
-	if ctx.BoolT("json") {
+	if ctx.BoolT(name(jsonFlag)) {
 		if len(vs) == 0 {
 			// ensure array format, i.e. ensure we dont print "nil"
 			fmt.Println("[]")
@@ -120,10 +154,10 @@ func violationListHandler(ctx *cli.Context) error {
 }
 
 func violationApplyHandler(ctx *cli.Context) error {
-	obj := ctx.String("object")
-	typ := ctx.String("type")
-	vio := ctx.String("violation")
-	sr := ctx.Int("suppress-recovery")
+	obj := ctx.String(name(objectFlag))
+	typ := ctx.String(name(typeFlag))
+	vio := ctx.String(name(violationFlag))
+	sr := ctx.Int(name(suppressRecoveryFlag))
 
 	client, err := getClient(ctx)
 	if err != nil {
@@ -142,9 +176,11 @@ func violationApplyHandler(ctx *cli.Context) error {
 }
 
 func violationBatchApplyHandler(ctx *cli.Context) error {
-	typ := ctx.String("type")
-	path := ctx.String("payload")
-	violreqs, err := readPayloadFile(path)
+	typ := ctx.String(name(typeFlag))
+	path := ctx.String(name(payloadFlag))
+	format := ctx.String(name(payloadFmtFlag))
+	viol := ctx.String(name(violationFlag))
+	violreqs, err := readPayloadFile(path, format, typ, viol)
 	if err != nil {
 		return fmt.Errorf("could not validate payload file: %s", err)
 	}

@@ -31,7 +31,7 @@ func dumpCmdHandler(ctx *cli.Context) error {
 		return fmt.Errorf("could not retrieve reputation entries: %s", err)
 	}
 
-	if ctx.BoolT("json") {
+	if ctx.BoolT(name(jsonFlag)) {
 		if len(entries) == 0 {
 			// ensure array format, i.e. ensure we dont print "nil"
 			fmt.Println("[]")

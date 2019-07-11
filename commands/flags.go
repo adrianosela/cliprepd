@@ -2,11 +2,20 @@ package commands
 
 import (
 	"fmt"
+	"strings"
 
 	cli "gopkg.in/urfave/cli.v1"
 )
 
-const mandatory = "[mandatory]"
+const (
+	mandatoryTag = "[mandatory]"
+
+	payloadFormatJSON = "json"
+	payloadFormatList = "list"
+
+	objectTypeIP    = "ip"
+	objectTypeEmail = "email"
+)
 
 var (
 	// config flags
@@ -23,7 +32,7 @@ var (
 		Usage: "auth token to use",
 	}
 
-	// i/o option flags
+	// output option flags
 	jsonFlag = cli.BoolFlag{
 		Name:  "json, j",
 		Usage: "print raw json -- don't pretty print",
@@ -36,7 +45,7 @@ var (
 	}
 	typeFlag = cli.StringFlag{
 		Name:  "type, t",
-		Usage: "type of object e.g. ip/email",
+		Usage: fmt.Sprintf("type of object e.g. \"%s\" or \"%s\"", objectTypeIP, objectTypeEmail),
 	}
 	suppressRecoveryFlag = cli.IntFlag{
 		Name:  "suppress-recovery, r",
@@ -49,6 +58,10 @@ var (
 	payloadFlag = cli.StringFlag{
 		Name:  "payload, p",
 		Usage: "path to payload file",
+	}
+	payloadFmtFlag = cli.StringFlag{
+		Name:  "payload-fmt, f",
+		Usage: fmt.Sprintf("format of payload file provided e.g. \"%s\" or \"%s\"", payloadFormatJSON, payloadFormatList),
 	}
 	violationFlag = cli.StringFlag{
 		Name:  "violation, v",
@@ -71,20 +84,39 @@ func withDefaultInt(f cli.IntFlag, def int) cli.IntFlag {
 }
 
 func asMandatory(f cli.StringFlag) cli.StringFlag {
-	f.Usage = fmt.Sprintf("%s %s", mandatory, f.Usage)
+	f.Usage = fmt.Sprintf("%s %s", mandatoryTag, f.Usage)
 	return f
 }
 
 func asMandatoryInt(f cli.IntFlag) cli.IntFlag {
-	f.Usage = fmt.Sprintf("%s %s", mandatory, f.Usage)
+	f.Usage = fmt.Sprintf("%s %s", mandatoryTag, f.Usage)
 	return f
 }
 
-func assertSet(ctx *cli.Context, flags ...string) error {
+func asMandatoryIf(f cli.StringFlag, cond string) cli.StringFlag {
+	f.Usage = fmt.Sprintf("[mandatory if %s] %s", cond, f.Usage)
+	return f
+}
+
+// name returns the long name of a flag
+// note that the split function returns the original string in index 0
+// if it does not contain the given delimiter ","
+func name(f cli.Flag) string {
+	return strings.Split(f.GetName(), ",")[0]
+}
+
+func assertSet(ctx *cli.Context, flags ...cli.Flag) error {
 	for _, f := range flags {
-		if !ctx.IsSet(f) {
-			return fmt.Errorf("missing %s argument \"%s\"", mandatory, f)
+		if !ctx.IsSet(name(f)) {
+			return fmt.Errorf("missing %s argument \"%s\"", mandatoryTag, name(f))
 		}
+	}
+	return nil
+}
+
+func assertSetIf(ctx *cli.Context, flag cli.Flag, cond func() bool) error {
+	if cond() && !ctx.IsSet(name(flag)) {
+		return fmt.Errorf("missing %s argument \"%s\"", mandatoryTag, name(flag))
 	}
 	return nil
 }
