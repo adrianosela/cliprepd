@@ -8,7 +8,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/adrianosela/cliprepd/config"
 	"github.com/olekukonko/tablewriter"
 	"go.mozilla.org/iprepd"
 	cli "gopkg.in/urfave/cli.v1"
@@ -20,8 +19,8 @@ var ViolationCmd = cli.Command{
 	Usage: "violation related commands",
 	Subcommands: []cli.Command{
 		{
-			Name:  "get",
-			Usage: "show all available violations",
+			Name:  "list",
+			Usage: "list all available violations",
 			Flags: []cli.Flag{
 				jsonFlag,
 			},
@@ -110,7 +109,7 @@ func readPayloadFile(path string) ([]iprepd.ViolationRequest, error) {
 }
 
 func violationGetHandler(ctx *cli.Context) error {
-	client, err := config.GetClient(ctx)
+	client, err := getClient(ctx)
 	if err != nil {
 		return fmt.Errorf("could not initialize client: %s", err)
 	}
@@ -152,7 +151,7 @@ func violationApplyHandler(ctx *cli.Context) error {
 	typ := ctx.String("type")
 	vio := ctx.String("violation")
 
-	client, err := config.GetClient(ctx)
+	client, err := getClient(ctx)
 	if err != nil {
 		return fmt.Errorf("could not initialize client: %s", err)
 	}
@@ -178,7 +177,7 @@ func violationBatchApplyHandler(ctx *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("could not validate payload file: %s", err)
 	}
-	client, err := config.GetClient(ctx)
+	client, err := getClient(ctx)
 	if err != nil {
 		return fmt.Errorf("could not initialize client: %s", err)
 	}

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/adrianosela/cliprepd/config"
 	"github.com/olekukonko/tablewriter"
 	cli "gopkg.in/urfave/cli.v1"
 )
@@ -21,7 +20,7 @@ var VersionCmd = cli.Command{
 }
 
 func versionHandler(ctx *cli.Context) error {
-	client, err := config.GetClient(ctx)
+	client, err := getClient(ctx)
 	if err != nil {
 		return fmt.Errorf("could not initialize client: %s", err)
 	}

@@ -6,9 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-
-	"github.com/adrianosela/cliprepd/lib"
-	cli "gopkg.in/urfave/cli.v1"
 )
 
 // DefaultConfigFilePath is the default path for the cli config file
@@ -51,19 +48,6 @@ func GetConfig(path string) (*Config, error) {
 		path = DefaultConfigFilePath
 	}
 	return readFSConfig(path)
-}
-
-// GetClient returns an IPrepd client populated with the correct config
-func GetClient(ctx *cli.Context) (*lib.IPrepd, error) {
-	cPath := ctx.GlobalString("config")
-	if cPath == "" {
-		cPath = DefaultConfigFilePath
-	}
-	config, err := readFSConfig(cPath)
-	if err != nil {
-		return nil, err
-	}
-	return lib.NewIPrepd(config.HostURL, config.AuthTK, nil)
 }
 
 func readFSConfig(path string) (*Config, error) {

@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/adrianosela/cliprepd/config"
 	"github.com/olekukonko/tablewriter"
 	"go.mozilla.org/iprepd"
 	cli "gopkg.in/urfave/cli.v1"
@@ -88,7 +87,7 @@ func reputationGetHandler(ctx *cli.Context) error {
 	typ := ctx.String("type")
 	obj := ctx.String("object")
 
-	client, err := config.GetClient(ctx)
+	client, err := getClient(ctx)
 	if err != nil {
 		return fmt.Errorf("could not initialize client: %s", err)
 	}
@@ -118,7 +117,7 @@ func reputationGetHandler(ctx *cli.Context) error {
 func reputationClearHandler(ctx *cli.Context) error {
 	typ := ctx.String("type")
 	obj := ctx.String("object")
-	client, err := config.GetClient(ctx)
+	client, err := getClient(ctx)
 	if err != nil {
 		return fmt.Errorf("could not initialize client: %s", err)
 	}
@@ -135,7 +134,7 @@ func reputationSetHandler(ctx *cli.Context) error {
 	rep := ctx.Int("score")
 	da := ctx.Int("decay-after")
 
-	client, err := config.GetClient(ctx)
+	client, err := getClient(ctx)
 	if err != nil {
 		return fmt.Errorf("could not initialize client: %s", err)
 	}

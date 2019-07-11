@@ -6,7 +6,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/adrianosela/cliprepd/config"
 	"github.com/olekukonko/tablewriter"
 	cli "gopkg.in/urfave/cli.v1"
 )
@@ -22,7 +21,7 @@ var DumpCmd = cli.Command{
 }
 
 func dumpCmdHandler(ctx *cli.Context) error {
-	client, err := config.GetClient(ctx)
+	client, err := getClient(ctx)
 	if err != nil {
 		return fmt.Errorf("could not initialize client: %s", err)
 	}
