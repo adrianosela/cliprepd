@@ -11,10 +11,6 @@ import (
 var version string // injected at build-time
 
 var appflags = []cli.Flag{
-	cli.BoolFlag{
-		Name:  "dry-run, d",
-		Usage: "show, dont do",
-	},
 	cli.StringFlag{
 		Name:  "config, c",
 		Usage: "override default config file path",
