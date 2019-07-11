@@ -52,21 +52,17 @@ var reputationGetFlags = []cli.Flag{
 
 var reputationSetFlags = []cli.Flag{
 	asMandatoryInt(scoreFlag),
-	withDefaultInt(decayAfterFlag, 0),
+	decayAfterFlag,
 }
 
 func reputationBaseValidator(ctx *cli.Context) error {
 	return assertSet(ctx,
 		"object",
-		"type",
 	)
 }
 
 func reputationSetValidator(ctx *cli.Context) error {
-	if err := assertSet(ctx,
-		"score",
-		"decay-after",
-	); err != nil {
+	if err := assertSet(ctx, "score"); err != nil {
 		return err
 	}
 	return reputationBaseValidator(ctx)

@@ -32,7 +32,7 @@ var ViolationCmd = cli.Command{
 				asMandatory(violationFlag),
 				asMandatory(objectFlag),
 				withDefault(typeFlag, "ip"),
-				withDefaultInt(suppressRecoveryFlag, 0),
+				suppressRecoveryFlag,
 			},
 			Before: violationApplyValidator,
 			Action: violationApplyHandler,
@@ -55,8 +55,6 @@ func violationApplyValidator(ctx *cli.Context) error {
 	return assertSet(ctx,
 		"violation",
 		"object",
-		"type",
-		"suppress-recovery",
 	)
 }
 

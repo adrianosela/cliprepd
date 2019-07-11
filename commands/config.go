@@ -37,7 +37,7 @@ var ConfigCmd = cli.Command{
 }
 
 func configSetValidator(ctx *cli.Context) error {
-	return assertSet(ctx, "url", "token", "path")
+	return assertSet(ctx, "url", "token")
 }
 
 func configSetHandler(ctx *cli.Context) error {
