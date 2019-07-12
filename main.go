@@ -22,7 +22,6 @@ var appcmds = []cli.Command{
 	commands.ReputationCmd,
 	commands.HeartbeatCmd,
 	commands.LBHeartbeatCmd,
-	commands.DumpCmd,
 	commands.VersionCmd,
 	commands.ConfigCmd,
 }

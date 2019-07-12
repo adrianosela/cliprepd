@@ -18,6 +18,14 @@ var ReputationCmd = cli.Command{
 	Usage: "reputation entry related commands",
 	Subcommands: []cli.Command{
 		{
+			Name:  "list",
+			Usage: "list all available reputation entries",
+			Flags: []cli.Flag{
+				jsonFlag,
+			},
+			Action: reputationListHandler,
+		},
+		{
 			Name:   "get",
 			Usage:  "get the entry for a given object",
 			Flags:  append(reputationBaseFlags, reputationGetFlags...),
@@ -66,6 +74,52 @@ func reputationSetValidator(ctx *cli.Context) error {
 		return err
 	}
 	return reputationBaseValidator(ctx)
+}
+
+func reputationListHandler(ctx *cli.Context) error {
+	client, err := getClient(ctx)
+	if err != nil {
+		return fmt.Errorf("could not initialize client: %s", err)
+	}
+
+	entries, err := client.Dump()
+	if err != nil {
+		return fmt.Errorf("could not retrieve reputation entries: %s", err)
+	}
+
+	if ctx.BoolT(name(jsonFlag)) {
+		if len(entries) == 0 {
+			// ensure array format, i.e. ensure we dont print "nil"
+			fmt.Println("[]")
+			return nil
+		}
+		raw, err := json.Marshal(entries)
+		if err != nil {
+			return fmt.Errorf("could not format response payload: %s", err)
+		}
+		fmt.Println(string(raw))
+		return nil
+	}
+
+	if len(entries) == 0 {
+		fmt.Println("-- no entries to show --")
+		return nil
+	}
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"TYPE", "OBJECT", "SCORE"})
+	for _, entry := range entries {
+		if entry.Object == "" {
+			if entry.IP != "" {
+				table.Append([]string{"ip (legacy entry)", entry.IP, strconv.Itoa(entry.Reputation)})
+			}
+			continue
+		}
+		table.Append([]string{entry.Type, entry.Object, strconv.Itoa(entry.Reputation)})
+	}
+	table.Render()
+
+	return nil
 }
 
 func reputationGetHandler(ctx *cli.Context) error {
