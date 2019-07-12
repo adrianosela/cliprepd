@@ -5,31 +5,31 @@ import (
 	"net/http"
 )
 
-// IPrepd is the connection IPrepd service client
+// IPrepd is the iprepd service client
 type IPrepd struct {
 	hostURL    string
-	authTk     string
+	authStr    string
 	httpClient *http.Client
 }
 
-// NewIPrepd is the default constructor for the Iprepd client
+// NewIPrepd is the default constructor for the client
 func NewIPrepd(url, token string, httpClient *http.Client) (*IPrepd, error) {
 	if url == "" {
-		return nil, errors.New("url cannot be empty")
+		return nil, errors.New(clientErrURLEmpty)
 	}
 	if token == "" {
-		return nil, errors.New("auth token cannot be empty")
+		return nil, errors.New(clientErrAuthEmpty)
 	}
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
 	return &IPrepd{
 		hostURL:    url,
-		authTk:     token,
+		authStr:    token,
 		httpClient: httpClient,
 	}, nil
 }
 
 func (c *IPrepd) addAuth(r *http.Request) {
-	r.Header.Set("Authorization", c.authTk)
+	r.Header.Set("Authorization", c.authStr)
 }

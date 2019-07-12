@@ -2,7 +2,6 @@ package lib
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -14,24 +13,24 @@ import (
 func (c *IPrepd) Dump() ([]iprepd.Reputation, error) {
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/dump", c.hostURL), nil)
 	if err != nil {
-		return nil, fmt.Errorf("could not build http request: %s", err)
+		return nil, fmt.Errorf("%s: %s", clientErrBuildRequest, err)
 	}
 	c.addAuth(req)
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("could not send http request: %s", err)
+		return nil, fmt.Errorf("%s: %s", clientErrSendRequest, err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("non 200 status code: %s")
+		return nil, fmt.Errorf("%s: %d", clientErrNon200, resp.StatusCode)
 	}
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 	if err != nil {
-		return nil, fmt.Errorf("could not read response body: %s", err)
+		return nil, fmt.Errorf("%s: %s", clientErrReadResponse, err)
 	}
 	var ret []iprepd.Reputation
 	if err = json.Unmarshal(bodyBytes, &ret); err != nil {
-		return nil, fmt.Errorf("could not unmarshal response body: %s", err)
+		return nil, fmt.Errorf("%s: %s", clientErrUnmarshal, err)
 	}
 	return ret, nil
 }
