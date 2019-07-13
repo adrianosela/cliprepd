@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -26,54 +27,66 @@ var ReputationCmd = cli.Command{
 			Action: reputationListHandler,
 		},
 		{
-			Name:   "get",
-			Usage:  "get the entry for a given object",
-			Flags:  append(reputationBaseFlags, reputationGetFlags...),
-			Before: reputationBaseValidator,
+			Name:  "get",
+			Usage: "get the entry for a given object",
+			Flags: []cli.Flag{
+				asMandatory(objectFlag),
+				withDefault(typeFlag, "ip"),
+				jsonFlag,
+			},
+			Before: reputationGetValidator,
 			Action: reputationGetHandler,
 		},
 		{
-			Name:   "clear",
-			Usage:  "delete the entry for a given object",
-			Flags:  reputationBaseFlags,
-			Before: reputationBaseValidator,
+			Name:  "set",
+			Usage: "update the entry for a given object",
+			Flags: []cli.Flag{
+				asMandatory(objectFlag),
+				asMandatoryInt(scoreFlag),
+				withDefault(typeFlag, "ip"),
+				decayAfterFlag,
+			},
+			Before: reputationSetValidator,
+			Action: reputationSetHandler,
+		},
+		{
+			Name:  "clear",
+			Usage: "delete the entry for a given object",
+			Flags: []cli.Flag{
+				asMandatory(objectFlag),
+				withDefault(typeFlag, "ip"),
+			},
+			Before: reputationClearValidator,
 			Action: reputationClearHandler,
 		},
 		{
-			Name:   "set",
-			Usage:  "update the entry for a given object",
-			Flags:  append(reputationBaseFlags, reputationSetFlags...),
-			Before: reputationSetValidator,
-			Action: reputationSetHandler,
+			Name:  "batch-clear",
+			Usage: "delete the entries for all objects in a given file",
+			Flags: []cli.Flag{
+				asMandatory(payloadFlag),
+				withDefault(typeFlag, "ip"),
+				exitOnFailFlag,
+			},
+			Before: reputationBatchClearValidator,
+			Action: reputationBatchClearHandler,
 		},
 	},
 }
 
-var reputationBaseFlags = []cli.Flag{
-	withDefault(typeFlag, "ip"),
-	asMandatory(objectFlag),
-}
-
-var reputationGetFlags = []cli.Flag{
-	jsonFlag,
-}
-
-var reputationSetFlags = []cli.Flag{
-	asMandatoryInt(scoreFlag),
-	decayAfterFlag,
-}
-
-func reputationBaseValidator(ctx *cli.Context) error {
-	return assertSet(ctx,
-		objectFlag,
-	)
+func reputationGetValidator(ctx *cli.Context) error {
+	return assertSet(ctx, objectFlag)
 }
 
 func reputationSetValidator(ctx *cli.Context) error {
-	if err := assertSet(ctx, scoreFlag); err != nil {
-		return err
-	}
-	return reputationBaseValidator(ctx)
+	return assertSet(ctx, objectFlag, scoreFlag)
+}
+
+func reputationClearValidator(ctx *cli.Context) error {
+	return assertSet(ctx, objectFlag)
+}
+
+func reputationBatchClearValidator(ctx *cli.Context) error {
+	return assertSet(ctx, payloadFlag)
 }
 
 func reputationListHandler(ctx *cli.Context) error {
@@ -132,7 +145,7 @@ func reputationGetHandler(ctx *cli.Context) error {
 	}
 	rept, err := client.GetReputation(typ, obj)
 	if err != nil {
-		return fmt.Errorf("could not get reputation for %s=%s", typ, obj)
+		return fmt.Errorf("could not get reputation for %s %s", typ, obj)
 	}
 	if ctx.BoolT(name(jsonFlag)) {
 		raw, err := json.Marshal(rept)
@@ -150,20 +163,6 @@ func reputationGetHandler(ctx *cli.Context) error {
 	table.Append([]string{"LAST UPDATED", rept.LastUpdated.String()})
 	table.Append([]string{"DECAY AFTER", rept.DecayAfter.String()})
 	table.Render()
-	return nil
-}
-
-func reputationClearHandler(ctx *cli.Context) error {
-	typ := ctx.String(name(typeFlag))
-	obj := ctx.String(name(objectFlag))
-	client, err := getClient(ctx)
-	if err != nil {
-		return fmt.Errorf("could not initialize client: %s", err)
-	}
-	if err := client.DeleteReputation(typ, obj); err != nil {
-		return fmt.Errorf("could not delete reputation for %s %s: %s", typ, obj, err)
-	}
-	fmt.Printf("reputation for %s %s deleted successfully!\n", typ, obj)
 	return nil
 }
 
@@ -186,5 +185,52 @@ func reputationSetHandler(ctx *cli.Context) error {
 		return fmt.Errorf("could not update reputation for %s %s: %s", typ, obj, err)
 	}
 	fmt.Printf("reputation for %s %s updated successfully!\n", typ, obj)
+	return nil
+}
+
+func reputationClearHandler(ctx *cli.Context) error {
+	typ := ctx.String(name(typeFlag))
+	obj := ctx.String(name(objectFlag))
+	client, err := getClient(ctx)
+	if err != nil {
+		return fmt.Errorf("could not initialize client: %s", err)
+	}
+	if err := client.DeleteReputation(typ, obj); err != nil {
+		return fmt.Errorf("could not delete reputation for %s %s: %s", typ, obj, err)
+	}
+	fmt.Printf("reputation for %s %s deleted successfully!\n", typ, obj)
+	return nil
+}
+
+func reputationBatchClearHandler(ctx *cli.Context) error {
+	typ := ctx.String(name(typeFlag))
+	path := ctx.String(name(payloadFlag))
+	e := ctx.Bool(name(exitOnFailFlag))
+
+	client, err := getClient(ctx)
+	if err != nil {
+		return fmt.Errorf("could not initialize client: %s", err)
+	}
+
+	file, err := os.Open(path)
+	defer file.Close()
+	if err != nil {
+		return fmt.Errorf("could not open payload file %s: %s", path, err)
+	}
+
+	objects := 0
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		obj := scanner.Text()
+		if err := client.DeleteReputation(typ, obj); err != nil {
+			if e {
+				return fmt.Errorf("could not delete reputation for %s %s: %s", typ, obj, err)
+			}
+			continue
+		}
+		objects++
+	}
+
+	fmt.Printf("%d reputation entries deleted!\n", objects)
 	return nil
 }

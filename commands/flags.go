@@ -32,10 +32,14 @@ var (
 		Usage: "auth token to use",
 	}
 
-	// output option flags
+	// option flags
 	jsonFlag = cli.BoolFlag{
 		Name:  "json, j",
 		Usage: "print raw json -- don't pretty print",
+	}
+	exitOnFailFlag = cli.BoolFlag{
+		Name:  "exit-on-fail, e",
+		Usage: "exit on first encountered failure",
 	}
 
 	// input flags
