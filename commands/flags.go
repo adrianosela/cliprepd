@@ -77,6 +77,13 @@ var (
 	}
 )
 
+// name returns the long name of a flag
+// note that the split function returns the original string in index 0
+// if it does not contain the given delimiter ","
+func name(f cli.Flag) string {
+	return strings.Split(f.GetName(), ",")[0]
+}
+
 func withDefault(f cli.StringFlag, def string) cli.StringFlag {
 	f.Value = def
 	return f
@@ -100,13 +107,6 @@ func asMandatoryInt(f cli.IntFlag) cli.IntFlag {
 func asMandatoryIf(f cli.StringFlag, cond string) cli.StringFlag {
 	f.Usage = fmt.Sprintf("[mandatory if %s] %s", cond, f.Usage)
 	return f
-}
-
-// name returns the long name of a flag
-// note that the split function returns the original string in index 0
-// if it does not contain the given delimiter ","
-func name(f cli.Flag) string {
-	return strings.Split(f.GetName(), ",")[0]
 }
 
 func assertSet(ctx *cli.Context, flags ...cli.Flag) error {
