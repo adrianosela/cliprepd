@@ -118,9 +118,9 @@ func assertSet(ctx *cli.Context, flags ...cli.Flag) error {
 	return nil
 }
 
-func assertSetIf(ctx *cli.Context, flag cli.Flag, cond func() bool) error {
-	if cond() && !ctx.IsSet(name(flag)) {
-		return fmt.Errorf("missing %s argument \"%s\"", mandatoryTag, name(flag))
+func assertSetIf(ctx *cli.Context, cond func() bool, flags ...cli.Flag) error {
+	if !cond() {
+		return nil
 	}
-	return nil
+	return assertSet(ctx, flags...)
 }

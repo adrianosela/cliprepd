@@ -62,16 +62,15 @@ func violationBatchApplyValidator(ctx *cli.Context) error {
 	if err := assertSet(ctx, payloadFlag); err != nil {
 		return err
 	}
-	if err := assertSetIf(ctx, typeFlag, func() bool {
+
+	cond := func() bool {
 		return ctx.String(name(payloadFmtFlag)) == payloadFormatList
-	}); err != nil {
+	}
+
+	if err := assertSetIf(ctx, cond, typeFlag, violationFlag); err != nil {
 		return err
 	}
-	if err := assertSetIf(ctx, violationFlag, func() bool {
-		return ctx.String(name(payloadFmtFlag)) == payloadFormatList
-	}); err != nil {
-		return err
-	}
+
 	if _, err := readPayloadFile(
 		ctx.String(name(payloadFlag)),
 		ctx.String(name(payloadFmtFlag)),
