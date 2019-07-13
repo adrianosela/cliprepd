@@ -15,7 +15,7 @@ const (
 	// http client errors
 	clientErrBuildRequest = "could not build http request"
 	clientErrSendRequest  = "could not send http request"
-	// http reponse payload errors
+	// http response payload errors
 	clientErrReadResponse = "could not read response body"
 	clientErrNon200       = "non 200 status code received"
 	clientErrUnmarshal    = "could not unmarshal response body"
