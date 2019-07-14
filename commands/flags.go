@@ -52,7 +52,7 @@ var (
 		Usage: fmt.Sprintf("type of object e.g. \"%s\" or \"%s\"", objectTypeIP, objectTypeEmail),
 	}
 	suppressRecoveryFlag = cli.IntFlag{
-		Name:  "suppress-recovery, r",
+		Name:  "suppress-recovery, s",
 		Usage: "seconds before object's reputation begins to heal",
 	}
 	scoreFlag = cli.IntFlag{
