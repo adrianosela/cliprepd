@@ -15,8 +15,9 @@ import (
 
 // ReputationCmd is the CLI command object for reputation operations
 var ReputationCmd = cli.Command{
-	Name:  "reputation",
-	Usage: "reputation entry related commands",
+	Name:    "reputation",
+	Aliases: []string{"r"},
+	Usage:   "reputation entry related commands",
 	Subcommands: []cli.Command{
 		{
 			Name:  "list",

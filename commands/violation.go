@@ -15,8 +15,9 @@ import (
 
 // ViolationCmd is the CLI command object for the violation operation
 var ViolationCmd = cli.Command{
-	Name:  "violation",
-	Usage: "violation related commands",
+	Name:    "violation",
+	Aliases: []string{"v"},
+	Usage:   "violation related commands",
 	Subcommands: []cli.Command{
 		{
 			Name:  "list",

@@ -18,8 +18,8 @@ var appflags = []cli.Flag{
 }
 
 var appcmds = []cli.Command{
-	commands.ViolationCmd,
 	commands.ReputationCmd,
+	commands.ViolationCmd,
 	commands.HeartbeatCmd,
 	commands.LBHeartbeatCmd,
 	commands.VersionCmd,
