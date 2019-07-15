@@ -9,13 +9,23 @@ import (
 	"os/user"
 )
 
-// DefaultConfigFilename is the default filename for the config file
-const DefaultConfigFilename = ".repd"
+const defaultConfigFilename = ".repd"
 
 // Config is the iprepd cli configuration
 type Config struct {
 	HostURL string `json:"host_url"`
 	AuthTK  string `json:"auth_token"`
+}
+
+// GetDefaultPath returns the best place to save / look-for a config file.
+// Using this function for both saving and reading the config file (with the
+// same OS) guarantees that a file will be found
+func GetDefaultPath() string {
+	usr, err := user.Current()
+	if err != nil {
+		return "/" // settle for rootdir
+	}
+	return fmt.Sprintf("%s/%s", usr.HomeDir, defaultConfigFilename)
 }
 
 // SetConfig writes a configuration file to the given path
@@ -27,11 +37,7 @@ func SetConfig(url, tk, path string) error {
 		return errors.New("token cannot be empty")
 	}
 	if path == "" {
-		usr, err := user.Current()
-		if err != nil {
-			return fmt.Errorf("could not get user's home directory: %s", err)
-		}
-		path = fmt.Sprintf("%s/%s", usr.HomeDir, DefaultConfigFilename)
+		path = GetDefaultPath()
 	}
 	f, err := os.Create(path)
 	if err != nil {
@@ -50,11 +56,7 @@ func SetConfig(url, tk, path string) error {
 // GetConfig returns the configuration at a given path
 func GetConfig(path string) (*Config, error) {
 	if path == "" {
-		usr, err := user.Current()
-		if err != nil {
-			return nil, fmt.Errorf("could not get user's home directory: %s", err)
-		}
-		path = fmt.Sprintf("%s/%s", usr.HomeDir, DefaultConfigFilename)
+		path = GetDefaultPath()
 	}
 	return readFSConfig(path)
 }
