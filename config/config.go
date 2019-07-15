@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/user"
 )
 
-// DefaultConfigFilePath is the default path for the cli config file
-const DefaultConfigFilePath = "/.repd"
+// DefaultConfigFilename is the default filename for the config file
+const DefaultConfigFilename = ".repd"
 
 // Config is the iprepd cli configuration
 type Config struct {
@@ -26,7 +27,11 @@ func SetConfig(url, tk, path string) error {
 		return errors.New("token cannot be empty")
 	}
 	if path == "" {
-		path = DefaultConfigFilePath
+		usr, err := user.Current()
+		if err != nil {
+			return fmt.Errorf("could not get user's home directory: %s", err)
+		}
+		path = fmt.Sprintf("%s/%s", usr.HomeDir, DefaultConfigFilename)
 	}
 	f, err := os.Create(path)
 	if err != nil {
@@ -45,7 +50,11 @@ func SetConfig(url, tk, path string) error {
 // GetConfig returns the configuration at a given path
 func GetConfig(path string) (*Config, error) {
 	if path == "" {
-		path = DefaultConfigFilePath
+		usr, err := user.Current()
+		if err != nil {
+			return nil, fmt.Errorf("could not get user's home directory: %s", err)
+		}
+		path = fmt.Sprintf("%s/%s", usr.HomeDir, DefaultConfigFilename)
 	}
 	return readFSConfig(path)
 }

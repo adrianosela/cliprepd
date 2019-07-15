@@ -21,7 +21,7 @@ var (
 	// config flags
 	pathFlag = cli.StringFlag{
 		Name:  "path, p",
-		Usage: "where to save config file",
+		Usage: "override default config file path",
 	}
 	urlFlag = cli.StringFlag{
 		Name:  "url, u",
