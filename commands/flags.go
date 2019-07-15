@@ -45,7 +45,7 @@ var (
 	// input flags
 	objectFlag = cli.StringFlag{
 		Name:  "object, o",
-		Usage: "object to apply violation to",
+		Usage: "the target object for the operation",
 	}
 	typeFlag = cli.StringFlag{
 		Name:  "type, t",
