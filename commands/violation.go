@@ -42,7 +42,7 @@ var ViolationCmd = cli.Command{
 		{
 			Name:        "batch-apply",
 			Description: "see https://github.com/mozilla-services/iprepd#put-violationstypeip for payload format",
-			Usage:       "batch-apply violations in a json file",
+			Usage:       "batch-apply violations in a payload file",
 			Flags: []cli.Flag{
 				asMandatory(payloadFlag),
 				withDefault(payloadFmtFlag, payloadFormatJSON),
