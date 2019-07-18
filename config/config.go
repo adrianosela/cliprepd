@@ -23,7 +23,8 @@ type Config struct {
 func GetDefaultPath() string {
 	usr, err := user.Current()
 	if err != nil {
-		return "/" // settle for rootdir
+		// settle for rootdir
+		return fmt.Sprintf("/%s", defaultConfigFilename)
 	}
 	return fmt.Sprintf("%s/%s", usr.HomeDir, defaultConfigFilename)
 }
